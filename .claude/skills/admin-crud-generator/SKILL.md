@@ -37,7 +37,7 @@ description: 当用户要求根据 Prisma 模型生成后台管理 CRUD 代码�
 
 - 路由：app/admin/<model>/page.tsx（列表）、new/page.tsx、[id]/edit/page.tsx
 - 列表页：服务端组件，`await searchParams` 取分页/搜索，shadcn Table，操作列放编辑/删除；价格用 formatPrice、日期用 formatDate；空态中文文案
-- 表单页：共用 components/admin/<model>-form.tsx（shadcn Form = react-hook-form + zod），编辑时服务端传初始值；关联字段用 Select 从 DB 拉选项
+- 表单页：共用 components/admin/<model>-form.tsx（**客户端 useActionState + 服务端 zod safeParse，参照 src/components/auth/auth-form.tsx 的既有模式**，不要引入 react-hook-form），编辑时服务端传初始值；关联字段用 Select 从 DB 拉选项
 - 删除必须 AlertDialog 二次确认；成功/失败用 sonner toast
 - UI 只用 shadcn 组件（components/ui/ 已有），不裸写 Tailwind 样式
 
@@ -51,14 +51,18 @@ description: 当用户要求根据 Prisma 模型生成后台管理 CRUD 代码�
 ## 参考模板
 
 ```ts
-// src/actions/admin.ts —— 单个 action 的标准形态
+// src/actions/admin.ts —— 单个 action 的标准形态（safeParse，错误返回给 useActionState，勿用 parse 抛错）
 "use server";
 
 export async function createProduct(prevState: unknown, formData: FormData) {
   await requireAdmin();
-  const parsed = productSchema.parse(Object.fromEntries(formData));
+  const parsed = productSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "参数错误" };
+  }
+  const { price, ...data } = parsed.data;
   await prisma.product.create({
-    data: { ...parsed, price: Math.round(Number(parsed.price) * 100) },
+    data: { ...data, price: Math.round(Number(price) * 100) }, // 元 → 分
   });
   revalidatePath("/admin/products");
 }

@@ -37,7 +37,7 @@
 ## 目录结构
 
 ```
-proxy.ts                    # 路由保护（验签 JWT cookie）
+src/proxy.ts                # 路由保护（验签 JWT cookie）
 prisma/                     # schema.prisma、seed.ts、dev.db
 public/images/              # product-1.svg ~ 6.svg 占位图
 src/
@@ -45,7 +45,7 @@ src/
 │  └─ admin/                # 后台：layout 守卫 + 统计/商品CRUD/订单/分类
 ├─ actions/                 # Server Actions：auth.ts cart.ts order.ts admin.ts
 ├─ components/              # ui/（shadcn 生成）+ 业务组件
-└─ lib/                     # db.ts session.ts auth.ts member.ts constants.ts format.ts
+└─ lib/                     # db.ts jwt.ts session.ts auth.ts member.ts constants.ts format.ts
 ```
 
 ## 常用命令
