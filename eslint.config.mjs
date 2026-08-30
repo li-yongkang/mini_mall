@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Skills 插件脚本（CommonJS），不属于项目代码
+    ".claude/**",
   ]),
 ]);
 
