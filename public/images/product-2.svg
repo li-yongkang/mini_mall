@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10b981"/>
+      <stop offset="1" stop-color="#14b8a6"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <!-- 同心圆 -->
+  <g fill="none" stroke="#ffffff">
+    <circle cx="200" cy="185" r="95" stroke-width="10"/>
+    <circle cx="200" cy="185" r="50" stroke-width="8" opacity="0.7"/>
+  </g>
+  <text x="200" y="330" font-family="sans-serif" font-size="28" fill="#ffffff" text-anchor="middle">Mini Mall</text>
+</svg>
