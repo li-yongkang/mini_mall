@@ -55,3 +55,34 @@ export async function addToCart(
   revalidatePath("/cart");
   return { ok: true };
 }
+
+export type CartMutationState = { error?: string; ok?: boolean; quantity?: number } | undefined;
+
+/** 修改购物车数量：属主校验 + clamp 到 1~库存，返回实际生效数量供客户端校正 */
+export async function updateCartItemQuantity(
+  cartItemId: string,
+  quantity: number
+): Promise<CartMutationState> {
+  const user = await requireUser();
+  const qty = Math.max(1, Math.min(99, Math.floor(quantity)));
+  const item = await prisma.cartItem.findFirst({
+    where: { id: cartItemId, userId: user.id },
+    include: { product: true },
+  });
+  if (!item) return { error: "购物车项不存在" };
+  const target = Math.min(qty, item.product.stock);
+  await prisma.cartItem.update({ where: { id: item.id }, data: { quantity: target } });
+  revalidatePath("/cart");
+  return { ok: true, quantity: target };
+}
+
+/** 移除购物车项（属主校验在 deleteMany 条件里） */
+export async function removeFromCart(cartItemId: string): Promise<CartMutationState> {
+  const user = await requireUser();
+  const { count } = await prisma.cartItem.deleteMany({
+    where: { id: cartItemId, userId: user.id },
+  });
+  if (count === 0) return { error: "购物车项不存在" };
+  revalidatePath("/cart");
+  return { ok: true };
+}
