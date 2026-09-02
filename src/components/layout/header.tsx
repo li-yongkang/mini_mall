@@ -46,6 +46,16 @@ export async function Header() {
                   {member.name}
                 </Badge>
               )}
+              {user.isAdmin && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={<Link href="/admin" />}
+                >
+                  后台管理
+                </Button>
+              )}
               <form action={logout}>
                 <Button type="submit" variant="ghost" size="sm">
                   登出
