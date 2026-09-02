@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { logout } from "@/actions/auth";
 import { getCurrentUser } from "@/lib/auth";
+import { getMemberInfo } from "@/lib/member";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export async function Header() {
   const user = await getCurrentUser();
+  const member = user ? getMemberInfo(user.totalSpent) : null;
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background">
@@ -35,6 +38,14 @@ export async function Header() {
           {user ? (
             <>
               <span className="text-sm text-muted-foreground">{user.name}</span>
+              {member && (
+                <Badge
+                  variant={member.level > 0 ? "default" : "secondary"}
+                  render={<Link href="/member" aria-label="会员中心" />}
+                >
+                  {member.name}
+                </Badge>
+              )}
               <form action={logout}>
                 <Button type="submit" variant="ghost" size="sm">
                   登出
